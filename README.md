@@ -1,9 +1,9 @@
-# ut-ms-reportingservices
-This Universal Task is based on the SQL Server Reporting Services RS.EXE utility. The here described Universal Task calls a script to 
-deploy a report on the Reporting Services Webserver.
+# ut-sap-import-calendar-csv
 
 # Abstract:
-This Universal Task allows to execute an MS SSIS Package using the “dtexec” utility which comes with the Microsoft SQLSERVER installation
+This Universal Task allows to mass import SAP calendar into Universal Automation Center. The SAP calendar to import are first extracted 
+from SAP using an SAP Function module and then loaded to the Universal Controller via the Rest API. After the import the SAP calendar 
+are available as Universal Automation Center Calendar with custom days for holidays and business days.
 
 # 1	Disclaimer
 No support and no warranty are provided by Stonebranch GmbH for this document and the related Universal Task. The use of this document 
@@ -13,115 +13,52 @@ Before using this task in a production system, please perform extensive testing.
 
 Stonebranch GmbH assumes no liability for damage caused by the performance of the Universal Tasks
 
-# 2	Scope 
-This document provides a documentation how to install and use the Universal Tasks for SAP Calendar Import. 
+# 2	Introduction
+This Universal Task allows to mass import SAP factory and related holiday calendar into Universal Automation Center. The SAP calendar to 
+import are first extracted from SAP using an SAP Function module and then loaded to the Universal Controller via the Rest API. After the 
+import the SAP calendar are available as Universal Automation Center Calendar with custom days of type holidays and business days.
+Some details about the Universal Task to import SAP calendar:
 
-# 3	Introduction
-This Universal Task is based on the SQL Server Reporting Services RS.EXE utility. RS.EXE is a command line utility that can perform many 
-scripted operations related to SQL Server Reporting Services (SSRS). It can be used to complete various administrative tasks including 
-publishing reports and moving reports from one server to another server. The RS.exe utility requires an input file to tell the RS.EXE 
-"what to do". The list of actual tasks that can be performed is includes among others:
+- The Universal Tasks allows to import all SAP factory and holiday Calendar related to a given SID and Client. Optionally only a 
+selected list of calendar ids can be imported. The list can be provided by a csv file uploaded to the script library.
+- The import can be scheduled via a Time Trigger e.g. import every day the sap calendar.
+- It can be configured which calendar years are imported e.g. current year + 2 additional years 
+- The Universal Task is based on a Python script template, 
+- No python needs to be installed; in case the Universal Agent has been installed with python binding option (parameter –python yes)
+- The Universal Task extracts the SAP calendar via the SAP certified UASP connector calling the “calendars” function. 
+- The Universal Task imports the extracted SAP Calendar by calling the Universal Controller Rest API. 
+- The Universal Task supports both Universal Agent for Linux/Unix and Windows
+- You can select different log-levels e.g. Info and debug
+- All Passwords are encrypted using Controller Credentials
 
-1.	Deploying / Publishing reports
-2.	Moving reports
-3.	Exporting reports to a file
-4.	Adjust security
-5.	Cancel a running job
-6.	Configure SSRS system properties
+# 3 Installation
+# 3.1 Requirements for Linux/Window Agent
+**Universal Template name:** ut-import-sap-calendar-csv
+**Related UAC XML Files for template and task: [1]:** 
 
-The here described Universal Task calls a script to deploy a report (N#1 in the list above).  Points 2-6 in the list above can also be implemented via a script called by the Universal task.
+Requirements to remotely connect from a Windows or Linux agent to an SAP System to extract the SAP factory and related holiday calendar: 
 
-Note: Further details on the RS.exe utility can be found in the attached document [1].  
-
-# 4	System Set-up  
-**Universal Task name:** Run SAP Data Service Job
-**Related UAC XML Files for template and task: [2]**
-
-**Software used:** 
-- MS SQLSERVER 2016 
--	Report Builder in SQL Server 2016
--	Windows Server 2012R2
--	UAC 6.4 Build 40 (beta-release)
--	UA 6.3.0.1 installed on the SAP Data Services Server
-
-# 5	Proposed enhancements
-
-**A)	A script for all possible RS.EXE scenarios should be generated:**
-
-1.	Deploying / Publishing reports (done)
-2.	Moving reports
-3.	Exporting reports to a file
-4.	Adjust security
-5.	Cancel a running job
-6.	Configure SSRS system properties
-
-**B)	Deploy reports using a SOAP Webservice**
-
-In the attached document [1] the command to deploy a report via a SOAP webservice is described. This solution has the advantage that no 
-Universal Agent would have to be deployed on the SQLSERVER.
-
-# 6	Solution Description
-
-The following describes how the Universal Task can be demonstrated, once it is set-up on the Stonebranch demo system.
- 
-**1.	Configure a new Report using Report Builder in SQL Server 2016**
-
-Image 1:
-![](images/image1.png)
-
-The report configuration is written to the file system as *rdl file e.g.: rechnunsdaten.rdl
-
-Image 2:
-![](images/image2.png)
-
-**2.	Test the Report in Report Builder in SQL Server 2016**
-
-Image 3:
-![](images/image3.png)
-
-Once it is tested in Report Builder in SQL Server 2016, you can deploy the report to the Reporting Server using Universal Task.
+- Universal Agent 6.5.x or higher
+- Universal Agent SAP Connector license added to the Universal Agent
+- Universal Agent installed with Python Option enabled
+- Universal Controller 6.5. or higher
+- For Python the following modules are required: 
+      - logging, for python loglevel support
+      - sys
+      - csv
+      - time
+      - datetime
+      - os, for linux command execution
+      - shutil
+      - subprocess
+      - io
+      - unicodedata
+      - json
+      - requests, to call Universal Controller REST API
+**Note:** Only the module requests need to be added via python installer pip. All other modules are available when installing the agent 
+with the python option. 
 
 
-**3.	Configure the universal task deploy a Reporting to the Reporting Server**
-
-Universal Task template
-
-Image 4:
-![](images/image4.png)
-
-Reporting Service Script to deploy a report:
-
-Image 5:
-![](images/image5.png)
-
-Universal Template fields:
-
-Image 6:
-![](images/image6.png)
-
-Universal Task
-
-Image 7:
-![](images/image7.png)
-
-**Dscription:**
-- REPORTNAME for the actual name of the report (=report file) to be deployed 
-- REPORTSERVER_FOLDER which describes the folder where the file should be deployed to (reportingserver webfolder)
-- FILEPATH denotes the location of the rdl file.
-
-**4.	Verify job execution in SAP Data Service Management Console**
-
-Log-On to the Reporting Webserver and check that the report has been deployed (see Universal Task Parameter reportserver): WALLDORF.
-
-e.g. http://walldorf/Reports/browse/ (user:admin/Porsche944)
-
-Browse to the folder, where the report should be deployed (see Universal Task Parameter: REPORTSERVER_FOLDER): /myreports
-
-Image 8:
-![](images/image8.png)
-
-# 7	Document References
-This document references the following documents:
 
 Image 9:
 ![](images/image9.png)
