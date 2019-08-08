@@ -60,7 +60,7 @@ Requirements to remotely connect from a Windows or Linux agent to an SAP System 
 **Note:** Only the module requests need to be added via python installer pip. All other modules are available when installing the agent 
 with the python option.
 
-# 3." Installation Steps
+# 3.1 Installation Steps
 The following describe the installation steps:
 
 **1.	Check the current Python binding Version of the Universal Agent**
@@ -69,6 +69,7 @@ The following describe the installation steps:
 Example:
 
 Image 1:
+
 ![](images/image1.png)
 
 If your Version is Python 3.6.x or later all is fine. If no python or a lower Version has been installed update your agent with the 
