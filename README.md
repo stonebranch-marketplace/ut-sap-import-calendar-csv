@@ -43,6 +43,7 @@ Requirements to remotely connect from a Windows or Linux agent to an SAP System 
 - Universal Agent installed with Python Option enabled
 - Universal Controller 6.5. or higher
 - For Python the following modules are required: 
+
       - logging, for python loglevel support
       - sys
       - csv
@@ -55,13 +56,32 @@ Requirements to remotely connect from a Windows or Linux agent to an SAP System 
       - unicodedata
       - json
       - requests, to call Universal Controller REST API
+      
 **Note:** Only the module requests need to be added via python installer pip. All other modules are available when installing the agent 
-with the python option. 
+with the python option.
+
+# 3." Installation Steps
+The following describe the installation steps:
+
+**1.	Check the current Python binding Version of the Universal Agent**
+/opt/universal/python3.6/bin/python3 -V (note Captial “V”)
+
+Example:
+
+Image 1:
+![](images/image1.png)
+
+If your Version is Python 3.6.x or later all is fine. If no python or a lower Version has been installed update your agent with the 
+Universal Agent Python binding option (--python yes). This option will install python 3.6. along with your universal agent.
+
+e.g.
+
+sudo sh ./unvinst --network_provider oms --oms_servers 7878@192.168.88.12 --oms_port 7878 --oms_autostart no --ac_netname OPSAUTOCONF --
+opscli yes **--python yes**
 
 
 
-Image 9:
-![](images/image9.png)
+
 
 
 
