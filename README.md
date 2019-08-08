@@ -211,7 +211,7 @@ The following basic test cases has been performed:
 
 Image 13:
 
-![](images/image13.png)
+![](images/image13.PNG)
 
 # 7  	Document References
 
