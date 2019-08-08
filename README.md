@@ -80,6 +80,26 @@ e.g.
 sudo sh ./unvinst --network_provider oms --oms_servers 7878@192.168.88.12 --oms_port 7878 --oms_autostart no --ac_netname OPSAUTOCONF --
 opscli yes **--python yes**
 
+**2.	Add the required python modules**
+The Universal Task requires the module requests. This can be added via Python Package Installer pip.
+
+**Windows Agent:**
+C:"\Program Files\Universal\Python36\python.exe" -m pip install requests
+
+**Linux Agent:**
+sudo /opt/universal/python3.6/bin/python3 -m pip install requests
+
+**Note: pip requires access to the Internet. If that is not available Stonebranch can provide the module as pre-configured python site-
+packages.**
+
+**3.	Import the Universal Task including the Universal Template to your Controller**
+Go to “All Tasks” and load via the Import functionality the Universal Task configuration into the Controller. 
+
+Image 2:
+
+![](images/image2.png)
+
+
 
 
 
